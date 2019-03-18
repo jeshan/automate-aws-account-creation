@@ -125,7 +125,7 @@ def get_template(template_file):
     return cf_template
 
 
-def deploy_resources(credentials, template, stack_name, stack_region, admin_username, admin_password):
+def deploy_resources(credentials, template_file, stack_name, stack_region, admin_username, admin_password):
 
     '''
         Create a CloudFormation stack of resources within the new account
@@ -145,7 +145,7 @@ def deploy_resources(credentials, template, stack_name, stack_region, admin_user
             creating_stack = False
             create_stack_response = client.create_stack(
                 StackName=stack_name,
-                TemplateBody=template,
+                TemplateBody=get_template(template_file),
                 Parameters=[
                     {
                         'ParameterKey' : 'AdminUsername',
@@ -234,8 +234,7 @@ def main(arguments):
     credentials = assume_role(account_id, args.account_role)
 
     print("Deploying resources from " + args.template_file + " as " + args.stack_name + " in " + args.stack_region)
-    template = get_template(args.template_file)
-    stack = deploy_resources(credentials, template, args.stack_name, args.stack_region, args.admin_username, args.admin_password)
+    stack = deploy_resources(credentials, args.template_file, args.stack_name, args.stack_region, args.admin_username, args.admin_password)
     print(stack)
     print("Resources deployed for account " + account_id + " (" + args.account_email + ")")
 
